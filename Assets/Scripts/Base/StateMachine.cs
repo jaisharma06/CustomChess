@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace CustomChess.Base
 {
     public class StateMachine

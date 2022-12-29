@@ -1,21 +1,38 @@
 using CustomChess.Base;
+using CustomChess.Pieces.States;
 using System;
 using System.Collections;
 using UnityEngine;
 
 namespace CustomChess.Pieces.Pawn
 {
-    public class PawnController : Controller, IMouseEnter, IMouseExit, IMouseClick
+    public class PawnController : Controller
     {
+        public PlayerType owner { get; private set; }
+
+        public PieceType pieceType { get => ((PieceData)m_data).pieceType; }
+        public bool IsHovered { get; private set; }
         private Coroutine CoroutineMoveToTarget;
 
         private Renderer _renderer;
+        private Animator _animator;
 
         protected override void Awake()
         {
-            base.Awake();
-
+            _animator = GetComponent<Animator>();
             _renderer = GetComponent<Renderer>();
+            base.Awake();
+        }
+
+        public StatePawnHovered PawnHoveredState { get; private set; }
+        public StatePawnUnhovered PawnUnhoveredState { get; private set; }
+
+        protected override void SetupStateMachine()
+        {
+            base.SetupStateMachine();
+            PawnHoveredState = new StatePawnHovered(this, _animator, "hovered", _stateMachine, m_data);
+            PawnUnhoveredState = new StatePawnUnhovered(this, _animator, "unhovered", _stateMachine, m_data);
+            _stateMachine.Initialize(PawnUnhoveredState);
         }
 
         protected void MoveToTarget(Vector3 target, Action onComplete)
@@ -45,21 +62,32 @@ namespace CustomChess.Pieces.Pawn
             onComplete?.Invoke();
         }
 
-        public void OnMouseEnter()
+        public void SetMaterial(Material material)
         {
-            _renderer.material.color = ((PieceData)m_data).hoverColor;
-            Debug.Log($"Mouse Entered: {name}");
+            _renderer.material = material;
         }
 
-        public void OnMouseExit()
+        public void SetOwner(PlayerType owner)
         {
-            _renderer.material.color = ((PieceData)m_data).originalColor;
-            Debug.Log($"Mouse Exited: {name}");
+            this.owner = owner;
         }
 
-        public void OnMouseClick()
+        public void SetPosition(float x, float z)
         {
-            Debug.Log($"Mouse Clicked: {name}");
+            var position = transform.position;
+            position.x = x;
+            position.z = z;
+            transform.position = position;
+        }
+
+        public void SetHovered()
+        {
+            IsHovered = true;
+        }
+
+        public void SetUnHovered()
+        {
+            IsHovered = false;
         }
     }
 }

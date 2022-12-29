@@ -1,3 +1,4 @@
+using CustomChess.Pieces;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -5,6 +6,7 @@ namespace CustomChess.ChessBoard
 {
     public class ChessBoard : MonoBehaviour
     {
+        [SerializeField] private PieceManager m_pieceManager;
         [SerializeField] private ChessBoardCell m_cellPrefab;
         [SerializeField] private Vector2 m_firstCellPos;
         [SerializeField] private Vector2 m_cellPadding;
@@ -19,6 +21,8 @@ namespace CustomChess.ChessBoard
         private void Awake()
         {
             InitializeCells();
+
+            m_pieceManager.PlacePieces(_cells);
         }
 
         private void InitializeCells()

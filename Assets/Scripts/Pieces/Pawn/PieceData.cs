@@ -7,10 +7,6 @@ namespace CustomChess.Pieces
     public class PieceData : Data
     {
         public float moveSpeed = 1f;
-
-        [Header("Colors")]
-        public Color hoverColor = Color.yellow;
-        public Color originalColor = Color.white;
-        public Color selectedColor;
+        public PieceType pieceType;
     }
 }

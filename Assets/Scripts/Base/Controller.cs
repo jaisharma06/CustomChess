@@ -13,6 +13,16 @@ namespace CustomChess.Base
             SetupStateMachine();
         }
 
+        protected virtual void Update()
+        {
+            _stateMachine?.Tick();
+        }
+
+        protected virtual void FixedUpdate()
+        {
+            _stateMachine?.PhysicsTick();
+        }
+
         protected virtual void SetupStateMachine()
         {
             _stateMachine = new StateMachine();

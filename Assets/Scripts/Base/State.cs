@@ -22,9 +22,13 @@ namespace CustomChess.Base
         public virtual void Enter() 
         {
             DoCheck();
+            anim.SetBool(animationName, true);
         }
 
-        public virtual void Exit() { }
+        public virtual void Exit() 
+        {
+            anim.SetBool(animationName, false);
+        }
 
         public virtual void Tick() { }
 

@@ -10,9 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1bf4d822ac4de6d458d359bc0e3a87dd, type: 3}
-  m_Name: WhitePieceData
+  m_Name: PieceData_Pawn
   m_EditorClassIdentifier: 
   moveSpeed: 1
-  hoverColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  originalColor: {r: 1, g: 1, b: 1, a: 1}
-  selectedColor: {r: 0.40392157, g: 1, b: 0, a: 0}
+  pieceType: 3
