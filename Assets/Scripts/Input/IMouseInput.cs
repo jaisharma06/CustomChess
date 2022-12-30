@@ -1,25 +1,25 @@
-public interface IMouseEnter 
+public interface IMousePointerEnter 
 {
-    void OnMouseEnter();
+    void OnMousePointerEnter();
 }
 
-public interface IMouseExit
+public interface IMousePointerExit
 {
-    void OnMouseExit();
+    void OnMousePointerExit();
 }
 
-public interface IMouseDown
+public interface IMousePointerDown
 {
-    void OnMouseDown();
+    void OnMousePointerDown();
 }
 
-public interface IMouseUp
+public interface IMousePointerUp
 {
-    void OnMouseUp();
+    void OnMousePointerUp();
 }
 
-public interface IMouseClick
+public interface IMousePointerClick
 {
-    void OnMouseClick();
+    void OnMousePointerClick();
 }
 

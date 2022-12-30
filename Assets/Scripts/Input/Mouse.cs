@@ -12,11 +12,11 @@ namespace CustomChess.MouseInput
 
         private Collider _mouseDownObject;
 
-        private IMouseEnter _mouseEnter;
-        private IMouseExit _mouseExit;
-        private IMouseDown _mouseDown;
-        private IMouseUp _mouseUp;
-        private IMouseClick _mouseClick;
+        private IMousePointerEnter _mouseEnter;
+        private IMousePointerExit _mouseExit;
+        private IMousePointerDown _mouseDown;
+        private IMousePointerUp _mouseUp;
+        private IMousePointerClick _mouseClick;
 
         private void Awake()
         {
@@ -31,32 +31,30 @@ namespace CustomChess.MouseInput
             {
                 if (_lastHit.collider)
                 {
-                    _mouseDown = _lastHit.collider.GetComponent<IMouseDown>();
+                    _mouseDown = _lastHit.collider.GetComponent<IMousePointerDown>();
                     if (_mouseDown != null)
                     {
-                        _mouseDown.OnMouseDown();
+                        _mouseDown.OnMousePointerDown();
                         _mouseDown = null;
                     }
                     _mouseDownObject = _lastHit.collider;
-                    Debug.Log($"Mouse Downed on: {_mouseDownObject.name}");
                 }
             }
             else if (Input.GetMouseButtonUp(0))
             {
                 if (_lastHit.collider)
                 {
-                    _mouseUp = _lastHit.collider.GetComponent<IMouseUp>();
+                    _mouseUp = _lastHit.collider.GetComponent<IMousePointerUp>();
                     if (_mouseUp != null)
                     {
-                        _mouseUp.OnMouseUp();
+                        _mouseUp.OnMousePointerUp();
                         _mouseUp = null;
                     }
 
-                    Debug.Log($"Mouse Uped on: {_mouseDownObject.name}, {_lastHit.collider.name}");
                     if (_mouseDownObject == _lastHit.collider)
                     {
-                        _mouseClick = _mouseDownObject.GetComponent<IMouseClick>();
-                        _mouseClick.OnMouseClick();
+                        _mouseClick = _mouseDownObject.GetComponent<IMousePointerClick>();
+                        _mouseClick.OnMousePointerClick();
                     }
                 }
             }
@@ -72,27 +70,28 @@ namespace CustomChess.MouseInput
                 {
                     if (_lastHit.collider)
                     {
-                        _mouseExit = _lastHit.collider.GetComponent<IMouseExit>();
-                        if (_mouseExit != null) _mouseExit.OnMouseExit();
-
-                        _mouseEnter = _hit.collider.GetComponent<IMouseEnter>();
-                        if (_mouseEnter != null) _mouseEnter.OnMouseEnter();
-
-                        _lastHit = _hit;
-                        _mouseEnter = null;
-                        _mouseExit = null;
+                        _mouseExit = _lastHit.collider.GetComponent<IMousePointerExit>();
+                        if (_mouseExit != null) _mouseExit.OnMousePointerExit();
                     }
+
+
+                    _mouseEnter = _hit.collider.GetComponent<IMousePointerEnter>();
+                    if (_mouseEnter != null) _mouseEnter.OnMousePointerEnter();
+
+                    _lastHit = _hit;
+                    _mouseEnter = null;
+                    _mouseExit = null;
                 }
             }
             else
             {
                 if (_lastHit.collider)
                 {
-                    _mouseEnter = _lastHit.collider.GetComponent<IMouseEnter>();
-                    if (_mouseEnter != null) _mouseEnter.OnMouseEnter();
+                    _mouseExit = _lastHit.collider.GetComponent<IMousePointerExit>();
+                    if (_mouseExit != null) _mouseExit.OnMousePointerExit();
 
                     _lastHit = _hit;
-                    _mouseEnter = null;
+                    _mouseExit = null;
                 }
             }
         }

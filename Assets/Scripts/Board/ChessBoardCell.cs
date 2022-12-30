@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace CustomChess.Board
 {
-    public class ChessBoardCell : MonoBehaviour, IMouseEnter, IMouseExit, IMouseClick, IMouseDown, IMouseUp
+    public class ChessBoardCell : MonoBehaviour, IMousePointerEnter, IMousePointerExit, IMousePointerClick
     {
         public PawnController pawn;
 
@@ -33,7 +33,7 @@ namespace CustomChess.Board
             _renderer.enabled = false;
         }
 
-        public void OnMouseExit()
+        public void OnMousePointerExit()
         {
             if (!pawn || DataHandler.instance.CurrentTurn != pawn.owner)
             {
@@ -42,7 +42,7 @@ namespace CustomChess.Board
             pawn.SetUnHovered();
         }
 
-        public void OnMouseEnter()
+        public void OnMousePointerEnter()
         {
             if (!pawn || DataHandler.instance.CurrentTurn != pawn.owner)
             {
@@ -52,32 +52,21 @@ namespace CustomChess.Board
             pawn.SetHovered();
         }
 
-        public void OnMouseClick()
-        {
-            if (!pawn || DataHandler.instance.CurrentTurn != pawn.owner)
-            {
-                return;
-            }
-            Debug.Log($"Mouse Clicked on: {pawn.name}");
-        }
-
-        public void OnMouseDown()
+        public void OnMousePointerClick()
         {
             if (!pawn || DataHandler.instance.CurrentTurn != pawn.owner)
             {
                 return;
             }
 
-            Debug.Log($"Mouse Down on: {pawn.name}");
-        }
-
-        public void OnMouseUp()
-        {
-            if (!pawn || DataHandler.instance.CurrentTurn != pawn.owner)
+            if(DataHandler.instance.SelectedPawn != pawn)
             {
-                return;
+                DataHandler.instance.SelectedPawn = pawn;
             }
-            Debug.Log($"Mouse Up on: {pawn.name}");
+            else
+            {
+                DataHandler.instance.SelectedPawn = null;
+            }
         }
     }
 }
