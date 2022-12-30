@@ -1,8 +1,7 @@
 using CustomChess.Pieces;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace CustomChess.ChessBoard
+namespace CustomChess.Board
 {
     public class ChessBoard : MonoBehaviour
     {
@@ -14,18 +13,12 @@ namespace CustomChess.ChessBoard
         private const int BOARD_ROWS = 8;
         private const int BOARD_COLS = 8;
 
-        private ChessBoardCell[ , ] _cells = new ChessBoardCell[BOARD_ROWS, BOARD_COLS];
+        private ChessBoardCell[,] _cells = new ChessBoardCell[BOARD_ROWS, BOARD_COLS];
+        public ChessBoardCell[,] cells { get => _cells; }
 
         private Vector2 _workSpace = Vector2.zero;
 
-        private void Awake()
-        {
-            InitializeCells();
-
-            m_pieceManager.PlacePieces(_cells);
-        }
-
-        private void InitializeCells()
+        public void InitializeCells()
         {
             for(int i =0; i < BOARD_ROWS; i++)
             {

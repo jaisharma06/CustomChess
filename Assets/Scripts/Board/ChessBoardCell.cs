@@ -1,10 +1,10 @@
+using CustomChess.Base;
 using CustomChess.Pieces.Pawn;
-using System;
 using UnityEngine;
 
-namespace CustomChess.ChessBoard
+namespace CustomChess.Board
 {
-    public class ChessBoardCell : MonoBehaviour, IMouseEnter, IMouseExit
+    public class ChessBoardCell : MonoBehaviour, IMouseEnter, IMouseExit, IMouseClick, IMouseDown, IMouseUp
     {
         public PawnController pawn;
 
@@ -35,7 +35,7 @@ namespace CustomChess.ChessBoard
 
         public void OnMouseExit()
         {
-            if (!pawn)
+            if (!pawn || DataHandler.instance.CurrentTurn != pawn.owner)
             {
                 return;
             }
@@ -44,12 +44,37 @@ namespace CustomChess.ChessBoard
 
         public void OnMouseEnter()
         {
-            if (!pawn)
+            if (!pawn || DataHandler.instance.CurrentTurn != pawn.owner)
             {
                 return;
             }
 
             pawn.SetHovered();
+        }
+
+        public void OnMouseClick()
+        {
+            if (!pawn || DataHandler.instance.CurrentTurn != pawn.owner)
+            {
+                return;
+            }
+            Debug.Log($"Mouse Clicked on: {pawn.name}");
+        }
+
+        public void OnMouseDown()
+        {
+            if (!pawn || DataHandler.instance.CurrentTurn != pawn.owner)
+            {
+                return;
+            }
+        }
+
+        public void OnMouseUp()
+        {
+            if (!pawn || DataHandler.instance.CurrentTurn != pawn.owner)
+            {
+                return;
+            }
         }
     }
 }

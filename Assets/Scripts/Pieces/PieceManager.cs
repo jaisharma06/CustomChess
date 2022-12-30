@@ -1,4 +1,4 @@
-using CustomChess.ChessBoard;
+using CustomChess.Board;
 using CustomChess.Pieces.Pawn;
 using System;
 using System.Collections.Generic;
