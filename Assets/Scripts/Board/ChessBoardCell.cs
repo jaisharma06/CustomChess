@@ -67,6 +67,8 @@ namespace CustomChess.Board
             {
                 return;
             }
+
+            Debug.Log($"Mouse Down on: {pawn.name}");
         }
 
         public void OnMouseUp()
@@ -75,6 +77,7 @@ namespace CustomChess.Board
             {
                 return;
             }
+            Debug.Log($"Mouse Up on: {pawn.name}");
         }
     }
 }

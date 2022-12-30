@@ -35,6 +35,7 @@ namespace CustomChess.MouseInput
                     if (_mouseDown != null)
                     {
                         _mouseDown.OnMouseDown();
+                        _mouseDown = null;
                     }
                     _mouseDownObject = _lastHit.collider;
                     Debug.Log($"Mouse Downed on: {_mouseDownObject.name}");
@@ -48,6 +49,7 @@ namespace CustomChess.MouseInput
                     if (_mouseUp != null)
                     {
                         _mouseUp.OnMouseUp();
+                        _mouseUp = null;
                     }
 
                     Debug.Log($"Mouse Uped on: {_mouseDownObject.name}, {_lastHit.collider.name}");
