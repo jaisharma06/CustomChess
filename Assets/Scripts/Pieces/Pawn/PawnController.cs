@@ -1,7 +1,9 @@
 using CustomChess.Base;
+using CustomChess.Board;
 using CustomChess.Pieces.States;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace CustomChess.Pieces.Pawn
@@ -12,6 +14,8 @@ namespace CustomChess.Pieces.Pawn
 
         public PieceType pieceType { get => ((PieceData)m_data).pieceType; }
         public bool IsHovered { get; private set; }
+        public bool IsSelected { get; private set; }
+
         private Coroutine CoroutineMoveToTarget;
 
         private Renderer _renderer;
@@ -26,12 +30,14 @@ namespace CustomChess.Pieces.Pawn
 
         public StatePawnHovered PawnHoveredState { get; private set; }
         public StatePawnUnhovered PawnUnhoveredState { get; private set; }
+        public StatePawnSelected PawnSelectedState { get; private set; }
 
         protected override void SetupStateMachine()
         {
             base.SetupStateMachine();
             PawnHoveredState = new StatePawnHovered(this, _animator, "hovered", _stateMachine, m_data);
             PawnUnhoveredState = new StatePawnUnhovered(this, _animator, "unhovered", _stateMachine, m_data);
+            PawnSelectedState = new StatePawnSelected(this, _animator, "selected", _stateMachine, m_data);
             _stateMachine.Initialize(PawnUnhoveredState);
         }
 
@@ -80,14 +86,14 @@ namespace CustomChess.Pieces.Pawn
             transform.position = position;
         }
 
-        public void SetHovered()
+        public void SetHovered(bool hovered)
         {
-            IsHovered = true;
+            IsHovered = hovered;
         }
 
-        public void SetUnHovered()
+        public void SetSelected(bool selected)
         {
-            IsHovered = false;
+            IsSelected = selected;
         }
     }
 }

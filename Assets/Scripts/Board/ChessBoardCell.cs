@@ -1,4 +1,6 @@
+using Anvarat.Utils;
 using CustomChess.Base;
+using CustomChess.Events;
 using CustomChess.Pieces.Pawn;
 using UnityEngine;
 
@@ -7,10 +9,14 @@ namespace CustomChess.Board
     public class ChessBoardCell : MonoBehaviour, IMousePointerEnter, IMousePointerExit, IMousePointerClick
     {
         public PawnController pawn;
+        [ReadOnly]
+        public Vector2Int Index;
 
         private Vector3 _workspace;
 
         private Renderer _renderer;
+
+        public bool IsEmpty { get => pawn == null; }
 
         private void Awake()
         {
@@ -39,7 +45,7 @@ namespace CustomChess.Board
             {
                 return;
             }
-            pawn.SetUnHovered();
+            pawn.SetHovered(false);
         }
 
         public void OnMousePointerEnter()
@@ -49,7 +55,7 @@ namespace CustomChess.Board
                 return;
             }
 
-            pawn.SetHovered();
+            pawn.SetHovered(true);
         }
 
         public void OnMousePointerClick()
@@ -61,10 +67,20 @@ namespace CustomChess.Board
 
             if(DataHandler.instance.SelectedPawn != pawn)
             {
+                pawn.SetSelected(true); //Todo: add cells parameter
+                EventManager.PawnSelected?.Invoke(this, false);
+
+                if (DataHandler.instance.SelectedPawn)
+                {
+                    DataHandler.instance.SelectedPawn.SetSelected(false);
+                }
+                
                 DataHandler.instance.SelectedPawn = pawn;
             }
             else
             {
+                pawn.SetSelected(false);
+                EventManager.PawnSelected?.Invoke(this, true);
                 DataHandler.instance.SelectedPawn = null;
             }
         }

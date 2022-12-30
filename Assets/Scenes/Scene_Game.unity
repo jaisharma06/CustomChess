@@ -535,6 +535,19 @@ MonoBehaviour:
     type: 3}
   m_firstCellPos: {x: -4.3726, y: 4.3726}
   m_cellPadding: {x: 1.25, y: 1.25}
+  m_validCellsChecker: {fileID: 440550423}
+--- !u!114 &440550423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 440550419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4dbd6a8efc39984cb0170c4608b7e53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -722,6 +735,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0edd427844bdd4b409d4cf77c127bb59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CurrentTurn: 0
+  SelectedPawn: {fileID: 0}
 --- !u!4 &1446509262
 Transform:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using CustomChess.Base;
 using CustomChess.Board;
 using CustomChess.Pieces.Pawn;
 using System;

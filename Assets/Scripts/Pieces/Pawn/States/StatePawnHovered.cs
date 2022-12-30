@@ -13,8 +13,11 @@ namespace CustomChess.Pieces.States
         public override void Tick()
         {
             base.Tick();
-
-            if (!((PawnController)controller).IsHovered)
+            if (((PawnController)controller).IsSelected)
+            {
+                stateMachine.SwitchState(((PawnController)controller).PawnSelectedState);
+            }
+            else if (!((PawnController)controller).IsHovered)
             {
                 stateMachine.SwitchState(((PawnController)controller).PawnUnhoveredState);
             }
