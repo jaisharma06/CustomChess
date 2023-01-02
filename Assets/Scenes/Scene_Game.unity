@@ -737,6 +737,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CurrentTurn: 0
   SelectedPawn: {fileID: 0}
+  SelectedPawnCell: {fileID: 0}
+  isOpponentAI: 1
 --- !u!4 &1446509262
 Transform:
   m_ObjectHideFlags: 0

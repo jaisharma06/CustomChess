@@ -16,6 +16,8 @@ namespace CustomChess.Board
 
         private Renderer _renderer;
 
+        private bool IsValid { get; set; }
+
         public bool IsEmpty { get => pawn == null; }
 
         private void Awake()
@@ -31,11 +33,13 @@ namespace CustomChess.Board
 
         public void Activate()
         {
+            IsValid = true;
             _renderer.enabled = true;
         }
 
         public void Deactivate()
         {
+            IsValid = false;
             _renderer.enabled = false;
         }
 
@@ -60,12 +64,41 @@ namespace CustomChess.Board
 
         public void OnMousePointerClick()
         {
-            if (!pawn || DataHandler.instance.CurrentTurn != pawn.owner)
+            if ((!pawn || DataHandler.instance.CurrentTurn != pawn.owner) && !IsValid)
             {
                 return;
             }
 
-            if(DataHandler.instance.SelectedPawn != pawn)
+            if(pawn == null) //When the valid cell is empty
+            {
+                MovePawnToEmptyCell();
+                return;
+            }
+
+            TogglePawnSelection();
+        }
+
+        private void MovePawnToEmptyCell()
+        {
+            if (IsValid)
+            {
+                EventManager.PawnStartedMoving?.Invoke();
+                DataHandler.instance.SelectedPawn.MoveToTarget(transform.position, () =>
+                {
+                    DataHandler.instance.SelectedPawnCell.pawn = null;
+                    pawn = DataHandler.instance.SelectedPawn;
+                    DataHandler.instance.SelectedPawn.SetSelected(false);
+                    EventManager.PawnSelected?.Invoke(this, true);
+                    DataHandler.instance.SelectedPawn = null;
+                    DataHandler.instance.SelectedPawnCell = null;
+                    EventManager.PawnStoppedMoving?.Invoke();
+                });
+            }
+        }
+
+        private void TogglePawnSelection()
+        {
+            if (DataHandler.instance.SelectedPawn != pawn)
             {
                 pawn.SetSelected(true); //Todo: add cells parameter
                 EventManager.PawnSelected?.Invoke(this, false);
@@ -74,14 +107,16 @@ namespace CustomChess.Board
                 {
                     DataHandler.instance.SelectedPawn.SetSelected(false);
                 }
-                
+
                 DataHandler.instance.SelectedPawn = pawn;
+                DataHandler.instance.SelectedPawnCell = this;
             }
             else
             {
                 pawn.SetSelected(false);
                 EventManager.PawnSelected?.Invoke(this, true);
                 DataHandler.instance.SelectedPawn = null;
+                DataHandler.instance.SelectedPawnCell = null;
             }
         }
     }

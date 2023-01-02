@@ -47,6 +47,7 @@ namespace CustomChess.Pieces
                 var piece = Instantiate(piecePrefab, m_whitePieceParent);
                 var cellIndex = m_whitePawnPositions[i].cellIndex;
                 var cell = cells[Mathf.RoundToInt(cellIndex.x), Mathf.RoundToInt(cellIndex.y)];
+                piece.IsFirstMove = true;
                 piece.SetPosition(cell.transform.position.x, cell.transform.position.z);
                 piece.SetOwner(PlayerType.Player1);
                 piece.SetMaterial(m_whiteMaterial);

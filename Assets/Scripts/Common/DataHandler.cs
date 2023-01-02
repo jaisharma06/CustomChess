@@ -11,5 +11,9 @@ namespace CustomChess.Base
         public PlayerType CurrentTurn;
         [ReadOnly]
         public PawnController SelectedPawn;
+        [ReadOnly]
+        public ChessBoardCell SelectedPawnCell;
+        [ReadOnly]
+        public bool isOpponentAI = true;
     }
 }

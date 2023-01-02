@@ -1,9 +1,7 @@
 using CustomChess.Base;
-using CustomChess.Board;
 using CustomChess.Pieces.States;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace CustomChess.Pieces.Pawn
@@ -15,6 +13,8 @@ namespace CustomChess.Pieces.Pawn
         public PieceType pieceType { get => ((PieceData)m_data).pieceType; }
         public bool IsHovered { get; private set; }
         public bool IsSelected { get; private set; }
+
+        public bool IsFirstMove { get; set; }
 
         private Coroutine CoroutineMoveToTarget;
 
@@ -41,7 +41,7 @@ namespace CustomChess.Pieces.Pawn
             _stateMachine.Initialize(PawnUnhoveredState);
         }
 
-        protected void MoveToTarget(Vector3 target, Action onComplete)
+        public void MoveToTarget(Vector3 target, Action onComplete)
         {
             StopMovement();
 
@@ -58,13 +58,14 @@ namespace CustomChess.Pieces.Pawn
 
         protected IEnumerator IE_MoveToTarget(Vector3 target, Action onComplete)
         {
-            while (Vector3.Distance(transform.position, target) <= 0.1f)
+            while (Vector3.Distance(transform.position, target) >= 0.1f)
             {
                 transform.position = Vector3.MoveTowards(transform.position, target, Time.deltaTime * ((PieceData)m_data).moveSpeed);
                 yield return null;
             }
 
             transform.position = target;
+            IsFirstMove = false;
             onComplete?.Invoke();
         }
 

@@ -12,5 +12,13 @@ public enum PlayerType
 {
     Player1,
     Player2,
-    AI
+    AI,
+    None
+}
+
+
+public enum MovementDirection
+{
+    Forward = 1,
+    Backward = -1
 }
