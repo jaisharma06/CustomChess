@@ -13,6 +13,7 @@ namespace CustomChess.Pieces.Pawn
         public PieceType pieceType { get => ((PieceData)m_data).pieceType; }
         public bool IsHovered { get; private set; }
         public bool IsSelected { get; private set; }
+        public bool IsDead { get; private set; }
 
         public bool IsFirstMove { get; set; }
 
@@ -95,6 +96,12 @@ namespace CustomChess.Pieces.Pawn
         public void SetSelected(bool selected)
         {
             IsSelected = selected;
+        }
+
+        public void Kill()
+        {
+            IsDead = true;
+            gameObject.SetActive(false);
         }
     }
 }

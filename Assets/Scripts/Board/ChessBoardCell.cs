@@ -64,12 +64,15 @@ namespace CustomChess.Board
 
         public void OnMousePointerClick()
         {
-            if ((!pawn || DataHandler.instance.CurrentTurn != pawn.owner) && !IsValid)
+            if ((DataHandler.instance.CurrentTurn == PlayerType.None) 
+                || (!IsValid && 
+                (!pawn || 
+                (pawn && DataHandler.instance.CurrentTurn != pawn.owner))))
             {
                 return;
             }
 
-            if(pawn == null) //When the valid cell is empty
+            if(IsValid) //When the valid cell is empty
             {
                 MovePawnToEmptyCell();
                 return;
@@ -80,27 +83,28 @@ namespace CustomChess.Board
 
         private void MovePawnToEmptyCell()
         {
-            if (IsValid)
+            EventManager.PawnStartedMoving?.Invoke();
+            DataHandler.instance.SelectedPawn.MoveToTarget(transform.position, () =>
             {
-                EventManager.PawnStartedMoving?.Invoke();
-                DataHandler.instance.SelectedPawn.MoveToTarget(transform.position, () =>
+                if(!IsEmpty && DataHandler.instance.SelectedPawn && pawn.owner != DataHandler.instance.SelectedPawn.owner) 
                 {
-                    DataHandler.instance.SelectedPawnCell.pawn = null;
-                    pawn = DataHandler.instance.SelectedPawn;
-                    DataHandler.instance.SelectedPawn.SetSelected(false);
-                    EventManager.PawnSelected?.Invoke(this, true);
-                    DataHandler.instance.SelectedPawn = null;
-                    DataHandler.instance.SelectedPawnCell = null;
-                    EventManager.PawnStoppedMoving?.Invoke();
-                });
-            }
+                    pawn.Kill();
+                }
+                DataHandler.instance.SelectedPawnCell.pawn = null;
+                pawn = DataHandler.instance.SelectedPawn;
+                DataHandler.instance.SelectedPawn.SetSelected(false);
+                EventManager.PawnSelected?.Invoke(this, true);
+                DataHandler.instance.SelectedPawn = null;
+                DataHandler.instance.SelectedPawnCell = null;
+                EventManager.PawnStoppedMoving?.Invoke();
+            });
         }
 
         private void TogglePawnSelection()
         {
             if (DataHandler.instance.SelectedPawn != pawn)
             {
-                pawn.SetSelected(true); //Todo: add cells parameter
+                pawn?.SetSelected(true); //Todo: add cells parameter
                 EventManager.PawnSelected?.Invoke(this, false);
 
                 if (DataHandler.instance.SelectedPawn)
@@ -113,7 +117,7 @@ namespace CustomChess.Board
             }
             else
             {
-                pawn.SetSelected(false);
+                pawn?.SetSelected(false);
                 EventManager.PawnSelected?.Invoke(this, true);
                 DataHandler.instance.SelectedPawn = null;
                 DataHandler.instance.SelectedPawnCell = null;
