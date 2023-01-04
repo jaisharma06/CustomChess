@@ -1,4 +1,5 @@
 using CustomChess.Board;
+using CustomChess.Pieces.Pawn;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +7,29 @@ namespace CustomChess.Pieces
 {
     public class PawnValidCellsChecker : MonoBehaviour
     {
+        public Dictionary<PawnController, List<ChessBoardCell>> whitePawnsLegalMovesMap = new Dictionary<PawnController, List<ChessBoardCell>>();
+
+        public void InitializeLegalMovesMap(List<PawnController> pawns)
+        {
+            pawns.ForEach(p =>
+            {
+                whitePawnsLegalMovesMap.Add(p, null);
+            });
+        }
+
+        public void UpdatePawnsLegalMoves(ChessBoardCell[,] cells)
+        {
+            foreach (var p in whitePawnsLegalMovesMap)
+            {
+                whitePawnsLegalMovesMap[p.Key] = GetValidCells(p.Key.pieceType, p.Key.IsFirstMove, p.Key.owner, p.Key.cell.Index, cells);
+            }
+        }
+
+        public List<ChessBoardCell> GetWhitePawnLegalMoves(PawnController pawn)
+        {
+            return whitePawnsLegalMovesMap[pawn];
+        }
+
         public List<ChessBoardCell> GetValidCells(PieceType pieceType, bool isFirstTurn, PlayerType owner, Vector2Int pawnCell, ChessBoardCell[,] cells)
         {
             switch (pieceType)

@@ -1,4 +1,3 @@
-using CustomChess.Base;
 using CustomChess.Board;
 using CustomChess.Pieces.Pawn;
 using System;
@@ -52,6 +51,7 @@ namespace CustomChess.Pieces
                 piece.SetOwner(PlayerType.Player1);
                 piece.SetMaterial(m_whiteMaterial);
                 cell.pawn = piece;
+                piece.cell = cell;
                 _playerPawns.Add(piece);
             }
         }
@@ -69,6 +69,7 @@ namespace CustomChess.Pieces
                 piece.SetOwner(PlayerType.AI);
                 piece.SetMaterial(m_blackMaterial);
                 cell.pawn = piece;
+                piece.cell = cell;
                 _opponentPawns.Add(piece);
             }
         }

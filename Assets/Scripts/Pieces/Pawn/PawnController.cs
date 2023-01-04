@@ -1,4 +1,6 @@
+using Anvarat.Utils;
 using CustomChess.Base;
+using CustomChess.Board;
 using CustomChess.Pieces.States;
 using System;
 using System.Collections;
@@ -9,6 +11,8 @@ namespace CustomChess.Pieces.Pawn
     public class PawnController : Controller
     {
         public PlayerType owner { get; private set; }
+        [ReadOnly]
+        public ChessBoardCell cell;
 
         public PieceType pieceType { get => ((PieceData)m_data).pieceType; }
         public bool IsHovered { get; private set; }

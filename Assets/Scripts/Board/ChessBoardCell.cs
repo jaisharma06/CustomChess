@@ -92,6 +92,7 @@ namespace CustomChess.Board
                 }
                 DataHandler.instance.SelectedPawnCell.pawn = null;
                 pawn = DataHandler.instance.SelectedPawn;
+                pawn.cell = this;
                 DataHandler.instance.SelectedPawn.SetSelected(false);
                 EventManager.PawnSelected?.Invoke(this, true);
                 DataHandler.instance.SelectedPawn = null;
