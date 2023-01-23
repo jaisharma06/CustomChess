@@ -61,7 +61,7 @@ namespace CustomChess.Board
                 return;
             }
 
-            m_validCellsChecker.UpdatePawnsLegalMoves(_cells);
+            m_validCellsChecker.UpdateWhitePawnsLegalMoves(_cells);
             _activatedCells = m_validCellsChecker.GetWhitePawnLegalMoves(cell.pawn);
             _activatedCells.ForEach(c => c.Activate());
         }

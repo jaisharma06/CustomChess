@@ -23,3 +23,8 @@ public interface IMousePointerClick
     void OnMousePointerClick();
 }
 
+public interface IMousePointerStay
+{
+    void OnMousePointerStay();
+}
+

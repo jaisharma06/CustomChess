@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace CustomChess.Board
 {
-    public class ChessBoardCell : MonoBehaviour, IMousePointerEnter, IMousePointerExit, IMousePointerClick
+    public class ChessBoardCell : MonoBehaviour, IMousePointerEnter, IMousePointerExit, IMousePointerClick, IMousePointerStay
     {
         public PawnController pawn;
         [ReadOnly]
@@ -123,6 +123,10 @@ namespace CustomChess.Board
                 DataHandler.instance.SelectedPawn = null;
                 DataHandler.instance.SelectedPawnCell = null;
             }
+        }
+
+        public void OnMousePointerStay()
+        {
         }
     }
 }

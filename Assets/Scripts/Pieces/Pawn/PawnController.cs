@@ -20,6 +20,7 @@ namespace CustomChess.Pieces.Pawn
         public bool IsDead { get; private set; }
 
         public bool IsFirstMove { get; set; }
+        public bool IsMoving { get; private set; }
         public string ID { get; set; }
 
         private Coroutine CoroutineMoveToTarget;
@@ -37,6 +38,7 @@ namespace CustomChess.Pieces.Pawn
         public StatePawnHovered PawnHoveredState { get; private set; }
         public StatePawnUnhovered PawnUnhoveredState { get; private set; }
         public StatePawnSelected PawnSelectedState { get; private set; }
+        public StatePawnMove PawnMoveState { get; private set; }
 
         protected override void SetupStateMachine()
         {
@@ -44,6 +46,7 @@ namespace CustomChess.Pieces.Pawn
             PawnHoveredState = new StatePawnHovered(this, _animator, "hovered", _stateMachine, m_data);
             PawnUnhoveredState = new StatePawnUnhovered(this, _animator, "unhovered", _stateMachine, m_data);
             PawnSelectedState = new StatePawnSelected(this, _animator, "selected", _stateMachine, m_data);
+            PawnMoveState = new StatePawnMove(this, _animator, "move", _stateMachine, m_data);
             _stateMachine.Initialize(PawnUnhoveredState);
         }
 
@@ -64,6 +67,7 @@ namespace CustomChess.Pieces.Pawn
 
         protected IEnumerator IE_MoveToTarget(Vector3 target, Action onComplete)
         {
+            IsMoving = true;
             while (Vector3.Distance(transform.position, target) >= 0.1f)
             {
                 transform.position = Vector3.MoveTowards(transform.position, target, Time.deltaTime * ((PieceData)m_data).moveSpeed);
@@ -72,6 +76,7 @@ namespace CustomChess.Pieces.Pawn
 
             transform.position = target;
             IsFirstMove = false;
+            IsMoving = false;
             onComplete?.Invoke();
         }
 

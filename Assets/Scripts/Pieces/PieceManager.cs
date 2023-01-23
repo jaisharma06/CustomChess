@@ -36,8 +36,6 @@ namespace CustomChess.Pieces
         {
             PlacePlayerPawns(cells);
             PlaceOpponentPawns(cells);
-
-            m_validCellsChecker?.InitializeLegalMovesMap(_playerPawns);
         }
 
         private void PlacePlayerPawns(ChessBoardCell[,] cells)
@@ -58,9 +56,11 @@ namespace CustomChess.Pieces
                 piece.ID = "White_" + (i + 1);
                 _playerPawns.Add(piece);
             }
+
+            m_validCellsChecker?.InitializeLegalMovesMap(_playerPawns, PlayerType.Player1);
         }
 
-        private void PlaceOpponentPawns(ChessBoardCell[,] cells)
+        private void PlaceOpponentPawns(ChessBoardCell[,] cells, PlayerType playerType = PlayerType.Player2)
         {
             _opponentPawns = new List<PawnController>();
             for (int i = 0; i < m_blackPawnPositions.Count; i++)
@@ -77,6 +77,8 @@ namespace CustomChess.Pieces
                 piece.ID = "Black_" + (i + 1);
                 _opponentPawns.Add(piece);
             }
+
+            m_validCellsChecker?.InitializeLegalMovesMap(_playerPawns, playerType);
         }
     }
 }

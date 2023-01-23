@@ -17,6 +17,9 @@ namespace CustomChess.Pieces.States
             if (!((PawnController)controller).IsSelected)
             {
                 stateMachine.SwitchState(((PawnController)controller).PawnUnhoveredState);
+            }else if (((PawnController)controller).IsMoving)
+            {
+                stateMachine.SwitchState(((PawnController)controller).PawnMoveState);
             }
         }
     }

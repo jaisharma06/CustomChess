@@ -17,6 +17,7 @@ namespace CustomChess.MouseInput
         private IMousePointerDown _mouseDown;
         private IMousePointerUp _mouseUp;
         private IMousePointerClick _mouseClick;
+        private IMousePointerStay _mouseStay;
 
         private void Awake()
         {
