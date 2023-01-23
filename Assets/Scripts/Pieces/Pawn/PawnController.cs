@@ -20,6 +20,7 @@ namespace CustomChess.Pieces.Pawn
         public bool IsDead { get; private set; }
 
         public bool IsFirstMove { get; set; }
+        public string ID { get; set; }
 
         private Coroutine CoroutineMoveToTarget;
 

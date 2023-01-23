@@ -19,6 +19,7 @@ namespace CustomChess.Pieces
         [SerializeField] private List<PawnController> m_pawns;
         [SerializeField] private List<PawnPositionMap> m_whitePawnPositions;
         [SerializeField] private List<PawnPositionMap> m_blackPawnPositions;
+        [SerializeField] private PawnValidCellsChecker m_validCellsChecker;
 
         [Header("Materials")]
         [SerializeField] private Material m_blackMaterial;
@@ -35,6 +36,8 @@ namespace CustomChess.Pieces
         {
             PlacePlayerPawns(cells);
             PlaceOpponentPawns(cells);
+
+            m_validCellsChecker?.InitializeLegalMovesMap(_playerPawns);
         }
 
         private void PlacePlayerPawns(ChessBoardCell[,] cells)
@@ -52,6 +55,7 @@ namespace CustomChess.Pieces
                 piece.SetMaterial(m_whiteMaterial);
                 cell.pawn = piece;
                 piece.cell = cell;
+                piece.ID = "White_" + (i + 1);
                 _playerPawns.Add(piece);
             }
         }
@@ -70,6 +74,7 @@ namespace CustomChess.Pieces
                 piece.SetMaterial(m_blackMaterial);
                 cell.pawn = piece;
                 piece.cell = cell;
+                piece.ID = "Black_" + (i + 1);
                 _opponentPawns.Add(piece);
             }
         }

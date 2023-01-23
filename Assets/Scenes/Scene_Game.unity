@@ -933,6 +933,7 @@ MonoBehaviour:
     cellIndex: {x: 6, y: 6}
   - pieceType: 3
     cellIndex: {x: 6, y: 7}
+  m_validCellsChecker: {fileID: 440550423}
   m_blackMaterial: {fileID: 2100000, guid: 235b0b05295f14125998d69b52f65c13, type: 2}
   m_whiteMaterial: {fileID: 2100000, guid: 509a6019d8ce04965a72fd00b4935a63, type: 2}
   m_whitePieceParent: {fileID: 848656611}

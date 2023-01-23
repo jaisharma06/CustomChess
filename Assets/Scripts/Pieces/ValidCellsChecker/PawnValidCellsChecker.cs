@@ -5,15 +5,33 @@ using UnityEngine;
 
 namespace CustomChess.Pieces
 {
+    public class LegalMoveMap
+    {
+        public PawnController pawn;
+        public List<ChessBoardCell> legalMoves;
+
+        public LegalMoveMap(PawnController pawn, List<ChessBoardCell> legalMoves)
+        {
+            this.pawn = pawn;
+            this.legalMoves = legalMoves;
+        }
+
+        public LegalMoveMap()
+        {
+            pawn = null;
+            legalMoves = null;
+        }
+    }
+
     public class PawnValidCellsChecker : MonoBehaviour
     {
-        public Dictionary<PawnController, List<ChessBoardCell>> whitePawnsLegalMovesMap = new Dictionary<PawnController, List<ChessBoardCell>>();
+        public Dictionary<string, LegalMoveMap> whitePawnsLegalMovesMap = new Dictionary<string, LegalMoveMap>();
 
         public void InitializeLegalMovesMap(List<PawnController> pawns)
         {
             pawns.ForEach(p =>
             {
-                whitePawnsLegalMovesMap.Add(p, null);
+                whitePawnsLegalMovesMap.Add(p.ID, new LegalMoveMap(p, null));
             });
         }
 
@@ -21,13 +39,13 @@ namespace CustomChess.Pieces
         {
             foreach (var p in whitePawnsLegalMovesMap)
             {
-                whitePawnsLegalMovesMap[p.Key] = GetValidCells(p.Key.pieceType, p.Key.IsFirstMove, p.Key.owner, p.Key.cell.Index, cells);
+                whitePawnsLegalMovesMap[p.Key].legalMoves = GetValidCells(p.Value.pawn.pieceType, p.Value.pawn.IsFirstMove, p.Value.pawn.owner, p.Value.pawn.cell.Index, cells);
             }
         }
 
         public List<ChessBoardCell> GetWhitePawnLegalMoves(PawnController pawn)
         {
-            return whitePawnsLegalMovesMap[pawn];
+            return whitePawnsLegalMovesMap[pawn.ID].legalMoves;
         }
 
         public List<ChessBoardCell> GetValidCells(PieceType pieceType, bool isFirstTurn, PlayerType owner, Vector2Int pawnCell, ChessBoardCell[,] cells)
