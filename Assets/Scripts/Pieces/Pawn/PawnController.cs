@@ -22,6 +22,8 @@ namespace CustomChess.Pieces.Pawn
         public bool IsFirstMove { get; set; }
         public bool IsMoving { get; private set; }
         public string ID { get; set; }
+        [ReadOnly]
+        public bool isSurroundedByEnemy;
 
         private Coroutine CoroutineMoveToTarget;
 

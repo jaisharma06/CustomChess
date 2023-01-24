@@ -1,4 +1,3 @@
-using CustomChess.Base;
 using CustomChess.Events;
 using CustomChess.Pieces;
 using System.Collections.Generic;
@@ -27,11 +26,13 @@ namespace CustomChess.Board
         private void OnEnable()
         {
             EventManager.PawnSelected += OnPawnSelected;
+            EventManager.PawnStoppedMoving += OnPawnMovementStop;
         }
 
         private void OnDisable()
         {
             EventManager.PawnSelected -= OnPawnSelected;
+            EventManager.PawnStoppedMoving -= OnPawnMovementStop;
         }
 
         public void InitializeCells()
@@ -57,13 +58,16 @@ namespace CustomChess.Board
 
             if (onlyDeactivate)
             {
-                _activatedCells.Clear();
+                //_activatedCells.Clear();
                 return;
             }
-
-            m_validCellsChecker.UpdateWhitePawnsLegalMoves(_cells);
             _activatedCells = m_validCellsChecker.GetWhitePawnLegalMoves(cell.pawn);
             _activatedCells.ForEach(c => c.Activate());
+        }
+
+        private void OnPawnMovementStop()
+        {
+            m_validCellsChecker.UpdateWhitePawnsLegalMoves(_cells);
         }
     }
 }

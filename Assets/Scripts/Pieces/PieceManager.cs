@@ -58,6 +58,7 @@ namespace CustomChess.Pieces
             }
 
             m_validCellsChecker?.InitializeLegalMovesMap(_playerPawns, PlayerType.Player1);
+            m_validCellsChecker.UpdateWhitePawnsLegalMoves(cells);
         }
 
         private void PlaceOpponentPawns(ChessBoardCell[,] cells, PlayerType playerType = PlayerType.Player2)
@@ -69,8 +70,9 @@ namespace CustomChess.Pieces
                 var piece = Instantiate(piecePrefab, m_blackPieceParent);
                 var cellIndex = m_blackPawnPositions[i].cellIndex;
                 var cell = cells[Mathf.RoundToInt(cellIndex.x), Mathf.RoundToInt(cellIndex.y)];
+                piece.IsFirstMove = true;
                 piece.SetPosition(cell.transform.position.x, cell.transform.position.z);
-                piece.SetOwner(PlayerType.AI);
+                piece.SetOwner(playerType);
                 piece.SetMaterial(m_blackMaterial);
                 cell.pawn = piece;
                 piece.cell = cell;
@@ -78,7 +80,8 @@ namespace CustomChess.Pieces
                 _opponentPawns.Add(piece);
             }
 
-            m_validCellsChecker?.InitializeLegalMovesMap(_playerPawns, playerType);
+            m_validCellsChecker?.InitializeLegalMovesMap(_opponentPawns, playerType);
+            m_validCellsChecker?.UpdateBlackPawnsLegalMoves(cells, playerType);
         }
     }
 }

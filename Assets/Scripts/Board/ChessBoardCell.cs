@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Anvarat.Utils;
 using CustomChess.Base;
 using CustomChess.Events;
@@ -19,6 +20,8 @@ namespace CustomChess.Board
         private bool IsValid { get; set; }
 
         public bool IsEmpty { get => pawn == null; }
+        [ReadOnly]
+        public List<PlayerType> LegalFor = new List<PlayerType>();
 
         private void Awake()
         {

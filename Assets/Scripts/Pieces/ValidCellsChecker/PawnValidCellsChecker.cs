@@ -1,6 +1,7 @@
 using CustomChess.Board;
 using CustomChess.Pieces.Pawn;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace CustomChess.Pieces
@@ -52,15 +53,35 @@ namespace CustomChess.Pieces
         {
             foreach (var p in whitePawnsLegalMovesMap)
             {
+                if(whitePawnsLegalMovesMap[p.Key].legalMoves != null)
+                {
+                    whitePawnsLegalMovesMap[p.Key].legalMoves.ForEach(c => c.LegalFor.Remove(PlayerType.Player1));
+                }
                 whitePawnsLegalMovesMap[p.Key].legalMoves = GetValidCells(p.Value.pawn.pieceType, p.Value.pawn.IsFirstMove, p.Value.pawn.owner, p.Value.pawn.cell.Index, cells);
+            }
+
+            var king = IsCheckMate();
+            if (king)
+            {
+                Debug.Log($"Check Mate __{king.owner}__");
             }
         }
 
-        public void UpdateBlackPawnsLegalMoves(ChessBoardCell[,] cells)
+        public void UpdateBlackPawnsLegalMoves(ChessBoardCell[,] cells, PlayerType owner)
         {
             foreach (var p in blackPawnsLegalMovesMap)
             {
-                blackPawnsLegalMovesMap[p.Key].legalMoves = GetValidCells(p.Value.pawn.pieceType, p.Value.pawn.IsFirstMove, p.Value.pawn.owner, p.Value.pawn.cell.Index, cells);
+                if (blackPawnsLegalMovesMap[p.Key].legalMoves != null)
+                {
+                    blackPawnsLegalMovesMap[p.Key].legalMoves.ForEach(c => c.LegalFor.Remove(owner));
+                }
+                blackPawnsLegalMovesMap[p.Key].legalMoves = GetValidCells(p.Value.pawn.pieceType, p.Value.pawn.IsFirstMove, owner, p.Value.pawn.cell.Index, cells);
+            }
+
+            var king = IsCheckMate();
+            if (king)
+            {
+                Debug.Log($"Check Mate __{king.owner}__");
             }
         }
 
@@ -102,6 +123,18 @@ namespace CustomChess.Pieces
 
         private List<ChessBoardCell> GetMovableCellsForPawn(PlayerType owner, bool isFirstTurn, Vector2Int pawnCell, ChessBoardCell[,] cells)
         {
+            switch (owner)
+            {
+                case PlayerType.Player1:
+                    return GetMovableCellsForWhitePawns(owner, isFirstTurn, pawnCell, cells);
+                default:
+                    return GetMovableCellsForBlackPawns(owner, isFirstTurn, pawnCell, cells);
+
+            }
+        }
+
+        private List<ChessBoardCell> GetMovableCellsForWhitePawns(PlayerType owner, bool isFirstTurn, Vector2Int pawnCell, ChessBoardCell[,] cells)
+        {
             List<ChessBoardCell> movableCells = new List<ChessBoardCell>();
 
             if (cells == null)
@@ -119,7 +152,7 @@ namespace CustomChess.Pieces
                 {
                     if (cells[pawnCell.x + 1 + i, pawnCell.y].IsEmpty)
                     {
-                        AddToMovableCells(movableCells, cells[pawnCell.x + i + 1, pawnCell.y]);
+                        AddToMovableCells(movableCells, cells[pawnCell.x + i + 1, pawnCell.y], owner);
                     }
                     else
                     {
@@ -135,7 +168,7 @@ namespace CustomChess.Pieces
                 {
                     if (cells[pawnCell.x + 1, pawnCell.y - 1].pawn.owner != owner)
                     {
-                        AddToMovableCells(movableCells, cells[pawnCell.x + 1, pawnCell.y - 1]);
+                        AddToMovableCells(movableCells, cells[pawnCell.x + 1, pawnCell.y - 1], owner);
                     }
                 }
             }
@@ -147,7 +180,62 @@ namespace CustomChess.Pieces
                 {
                     if (cells[pawnCell.x + 1, pawnCell.y + 1].pawn.owner != owner)
                     {
-                        AddToMovableCells(movableCells, cells[pawnCell.x + 1, pawnCell.y + 1]);
+                        AddToMovableCells(movableCells, cells[pawnCell.x + 1, pawnCell.y + 1], owner);
+                    }
+                }
+            }
+
+            return movableCells;
+        }
+
+        private List<ChessBoardCell> GetMovableCellsForBlackPawns(PlayerType owner, bool isFirstTurn, Vector2Int pawnCell, ChessBoardCell[,] cells)
+        {
+            List<ChessBoardCell> movableCells = new List<ChessBoardCell>();
+
+            if (cells == null)
+            {
+                return movableCells;
+            }
+
+
+            //Forward cell
+            int forwardCells = (isFirstTurn) ? 2 : 1;
+
+            for (int i = 0; i < forwardCells; i++)
+            {
+                if (pawnCell.x  - (i + 1) >= 0)
+                {
+                    if (cells[pawnCell.x - (1 + i), pawnCell.y].IsEmpty)
+                    {
+                        AddToMovableCells(movableCells, cells[pawnCell.x - (i + 1), pawnCell.y], owner);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+            //Left diagonal cell
+            if (pawnCell.x - 1 >= 0 && pawnCell.y > 0)
+            {
+                if (!cells[pawnCell.x - 1, pawnCell.y - 1].IsEmpty)
+                {
+                    if (cells[pawnCell.x - 1, pawnCell.y - 1].pawn.owner != owner)
+                    {
+                        AddToMovableCells(movableCells, cells[pawnCell.x - 1, pawnCell.y - 1], owner);
+                    }
+                }
+            }
+
+            //Right diagonal cell
+            if (pawnCell.x - 1 >= 0 && pawnCell.y < ChessBoard.BOARD_ROWS - 1)
+            {
+                if (!cells[pawnCell.x - 1, pawnCell.y + 1].IsEmpty)
+                {
+                    if (cells[pawnCell.x - 1, pawnCell.y + 1].pawn.owner != owner)
+                    {
+                        AddToMovableCells(movableCells, cells[pawnCell.x - 1, pawnCell.y + 1], owner);
                     }
                 }
             }
@@ -172,7 +260,7 @@ namespace CustomChess.Pieces
                 {
                     if (cells[pawnCell.x + 2, pawnCell.y - 1].IsEmpty || cells[pawnCell.x + 2, pawnCell.y - 1].pawn.owner != owner)
                     {
-                        AddToMovableCells(movableCells, cells[pawnCell.x + 2, pawnCell.y - 1]);
+                        AddToMovableCells(movableCells, cells[pawnCell.x + 2, pawnCell.y - 1], owner);
                     }
                 }
                 //Forward Right
@@ -180,7 +268,7 @@ namespace CustomChess.Pieces
                 {
                     if (cells[pawnCell.x + 2, pawnCell.y + 1].IsEmpty || cells[pawnCell.x + 2, pawnCell.y + 1].pawn.owner != owner)
                     {
-                        AddToMovableCells(movableCells, cells[pawnCell.x + 2, pawnCell.y + 1]);
+                        AddToMovableCells(movableCells, cells[pawnCell.x + 2, pawnCell.y + 1], owner);
                     }
                 }
             }
@@ -192,7 +280,7 @@ namespace CustomChess.Pieces
                 {
                     if (cells[pawnCell.x - 1, pawnCell.y - 2].IsEmpty || cells[pawnCell.x - 1, pawnCell.y - 2].pawn.owner != owner)
                     {
-                        AddToMovableCells(movableCells, cells[pawnCell.x - 1, pawnCell.y - 2]);
+                        AddToMovableCells(movableCells, cells[pawnCell.x - 1, pawnCell.y - 2], owner);
                     }
                 }
                 //Left Top
@@ -200,7 +288,7 @@ namespace CustomChess.Pieces
                 {
                     if (cells[pawnCell.x + 1, pawnCell.y - 2].IsEmpty || cells[pawnCell.x + 1, pawnCell.y - 2].pawn.owner != owner)
                     {
-                        AddToMovableCells(movableCells, cells[pawnCell.x + 1, pawnCell.y - 2]);
+                        AddToMovableCells(movableCells, cells[pawnCell.x + 1, pawnCell.y - 2], owner);
                     }
                 }
             }
@@ -212,7 +300,7 @@ namespace CustomChess.Pieces
                 {
                     if (cells[pawnCell.x - 1, pawnCell.y + 2].IsEmpty || cells[pawnCell.x - 1, pawnCell.y + 2].pawn.owner != owner)
                     {
-                        AddToMovableCells(movableCells, cells[pawnCell.x - 1, pawnCell.y + 2]);
+                        AddToMovableCells(movableCells, cells[pawnCell.x - 1, pawnCell.y + 2], owner);
                     }
                 }
                 //Right Top
@@ -220,7 +308,7 @@ namespace CustomChess.Pieces
                 {
                     if (cells[pawnCell.x + 1, pawnCell.y + 2].IsEmpty || cells[pawnCell.x + 1, pawnCell.y + 2].pawn.owner != owner)
                     {
-                        AddToMovableCells(movableCells, cells[pawnCell.x + 1, pawnCell.y + 2]);
+                        AddToMovableCells(movableCells, cells[pawnCell.x + 1, pawnCell.y + 2], owner);
                     }
                 }
             }
@@ -232,7 +320,7 @@ namespace CustomChess.Pieces
                 {
                     if (cells[pawnCell.x - 2, pawnCell.y - 1].IsEmpty || cells[pawnCell.x - 2, pawnCell.y - 1].pawn.owner != owner)
                     {
-                        AddToMovableCells(movableCells, cells[pawnCell.x - 2, pawnCell.y - 1]);
+                        AddToMovableCells(movableCells, cells[pawnCell.x - 2, pawnCell.y - 1], owner);
                     }
                 }
                 //Bottom Right
@@ -240,17 +328,21 @@ namespace CustomChess.Pieces
                 {
                     if (cells[pawnCell.x - 2, pawnCell.y + 1].IsEmpty || cells[pawnCell.x - 2, pawnCell.y + 1].pawn.owner != owner)
                     {
-                        AddToMovableCells(movableCells, cells[pawnCell.x - 2, pawnCell.y + 1]);
+                        AddToMovableCells(movableCells, cells[pawnCell.x - 2, pawnCell.y + 1], owner);
                     }
                 }
             }
             return movableCells;
         }
 
-        private void AddToMovableCells(List<ChessBoardCell> movableCells, ChessBoardCell cell)
+        private void AddToMovableCells(List<ChessBoardCell> movableCells, ChessBoardCell cell, PlayerType owner)
         {
             if (!movableCells.Contains(cell))
             {
+                if (!cell.LegalFor.Contains(owner))
+                {
+                    cell.LegalFor.Add(owner);
+                }
                 movableCells.Add(cell);
             }
         }
@@ -275,13 +367,13 @@ namespace CustomChess.Pieces
             {
                 if (cells[i, j].IsEmpty)
                 {
-                    AddToMovableCells(movableCells, cells[i, j]);
+                    AddToMovableCells(movableCells, cells[i, j], owner);
                 }
                 else
                 {
                     if (cells[i, j].pawn != null && cells[i, j].pawn.owner != owner)
                     {
-                        AddToMovableCells(movableCells, cells[i, j]);
+                        AddToMovableCells(movableCells, cells[i, j], owner);
                     }
                     break;
                 }
@@ -295,13 +387,13 @@ namespace CustomChess.Pieces
             {
                 if (cells[i, j].IsEmpty)
                 {
-                    AddToMovableCells(movableCells, cells[i, j]);
+                    AddToMovableCells(movableCells, cells[i, j], owner);
                 }
                 else
                 {
                     if (cells[i, j].pawn != null && cells[i, j].pawn.owner != owner)
                     {
-                        AddToMovableCells(movableCells, cells[i, j]);
+                        AddToMovableCells(movableCells, cells[i, j], owner);
                     }
                     break;
                 }
@@ -315,13 +407,13 @@ namespace CustomChess.Pieces
             {
                 if (cells[i, j].IsEmpty)
                 {
-                    AddToMovableCells(movableCells, cells[i, j]);
+                    AddToMovableCells(movableCells, cells[i, j], owner);
                 }
                 else
                 {
                     if (cells[i, j].pawn != null && cells[i, j].pawn.owner != owner)
                     {
-                        AddToMovableCells(movableCells, cells[i, j]);
+                        AddToMovableCells(movableCells, cells[i, j], owner);
                     }
                     break;
                 }
@@ -335,13 +427,13 @@ namespace CustomChess.Pieces
             {
                 if (cells[i, j].IsEmpty)
                 {
-                    AddToMovableCells(movableCells, cells[i, j]);
+                    AddToMovableCells(movableCells, cells[i, j], owner);
                 }
                 else
                 {
                     if (cells[i, j].pawn != null && cells[i, j].pawn.owner != owner)
                     {
-                        AddToMovableCells(movableCells, cells[i, j]);
+                        AddToMovableCells(movableCells, cells[i, j], owner);
                     }
                     break;
                 }
@@ -370,13 +462,13 @@ namespace CustomChess.Pieces
             {
                 if (cells[i, j].IsEmpty)
                 {
-                    AddToMovableCells(movableCells, cells[i, j]);
+                    AddToMovableCells(movableCells, cells[i, j], owner);
                 }
                 else
                 {
                     if (cells[i, j].pawn && (cells[i, j].pawn.owner != owner))
                     {
-                        AddToMovableCells(movableCells, cells[i,j]);
+                        AddToMovableCells(movableCells, cells[i,j], owner);
                     }
                     break;
                 }
@@ -389,13 +481,13 @@ namespace CustomChess.Pieces
             {
                 if (cells[i, j].IsEmpty)
                 {
-                    AddToMovableCells(movableCells, cells[i, j]);
+                    AddToMovableCells(movableCells, cells[i, j], owner);
                 }
                 else
                 {
                     if (cells[i, j].pawn && (cells[i, j].pawn.owner != owner))
                     {
-                        AddToMovableCells(movableCells, cells[i, j]);
+                        AddToMovableCells(movableCells, cells[i, j], owner);
                     }
                     break;
                 }
@@ -408,13 +500,13 @@ namespace CustomChess.Pieces
             {
                 if (cells[i, j].IsEmpty)
                 {
-                    AddToMovableCells(movableCells, cells[i, j]);
+                    AddToMovableCells(movableCells, cells[i, j], owner);
                 }
                 else
                 {
                     if (cells[i, j].pawn && (cells[i, j].pawn.owner != owner))
                     {
-                        AddToMovableCells(movableCells, cells[i, j]);
+                        AddToMovableCells(movableCells, cells[i, j], owner);
                     }
                     break;
                 }
@@ -427,13 +519,13 @@ namespace CustomChess.Pieces
             {
                 if (cells[i, j].IsEmpty)
                 {
-                    AddToMovableCells(movableCells, cells[i, j]);
+                    AddToMovableCells(movableCells, cells[i, j], owner);
                 }
                 else
                 {
                     if (cells[i, j].pawn && (cells[i, j].pawn.owner != owner))
                     {
-                        AddToMovableCells(movableCells, cells[i, j]);
+                        AddToMovableCells(movableCells, cells[i, j], owner);
                     }
                     break;
                 }
@@ -471,7 +563,7 @@ namespace CustomChess.Pieces
             {
                 if (cells[pawnCell.x + 1, pawnCell.y].IsEmpty || (cells[pawnCell.x + 1, pawnCell.y].pawn && cells[pawnCell.x + 1, pawnCell.y].pawn.owner != owner))
                 {
-                    AddToMovableCells(movableCells, cells[pawnCell.x + 1, pawnCell.y]);
+                    AddToMovableCells(movableCells, cells[pawnCell.x + 1, pawnCell.y], owner);
                 }
             }
 
@@ -480,7 +572,7 @@ namespace CustomChess.Pieces
             {
                 if (cells[pawnCell.x - 1, pawnCell.y].IsEmpty || (cells[pawnCell.x - 1, pawnCell.y].pawn && cells[pawnCell.x - 1, pawnCell.y].pawn.owner != owner))
                 {
-                    AddToMovableCells(movableCells, cells[pawnCell.x - 1 , pawnCell.y]);
+                    AddToMovableCells(movableCells, cells[pawnCell.x - 1 , pawnCell.y], owner);
                 }
             }
 
@@ -489,7 +581,7 @@ namespace CustomChess.Pieces
             {
                 if (cells[pawnCell.x, pawnCell.y + 1].IsEmpty || (cells[pawnCell.x, pawnCell.y + 1].pawn && cells[pawnCell.x, pawnCell.y + 1].pawn.owner != owner))
                 {
-                    AddToMovableCells(movableCells, cells[pawnCell.x, pawnCell.y + 1]);
+                    AddToMovableCells(movableCells, cells[pawnCell.x, pawnCell.y + 1], owner);
                 }
             }
 
@@ -498,7 +590,7 @@ namespace CustomChess.Pieces
             {
                 if (cells[pawnCell.x, pawnCell.y - 1].IsEmpty || (cells[pawnCell.x, pawnCell.y - 1].pawn && cells[pawnCell.x, pawnCell.y - 1].pawn.owner != owner))
                 {
-                    AddToMovableCells(movableCells, cells[pawnCell.x, pawnCell.y - 1]);
+                    AddToMovableCells(movableCells, cells[pawnCell.x, pawnCell.y - 1], owner);
                 }
             }
 
@@ -507,7 +599,7 @@ namespace CustomChess.Pieces
             {
                 if (cells[pawnCell.x + 1, pawnCell.y - 1].IsEmpty || (cells[pawnCell.x + 1, pawnCell.y - 1].pawn && cells[pawnCell.x + 1, pawnCell.y - 1].pawn.owner != owner))
                 {
-                    AddToMovableCells(movableCells, cells[pawnCell.x + 1, pawnCell.y - 1]);
+                    AddToMovableCells(movableCells, cells[pawnCell.x + 1, pawnCell.y - 1], owner);
                 }
             }
 
@@ -516,7 +608,7 @@ namespace CustomChess.Pieces
             {
                 if (cells[pawnCell.x + 1, pawnCell.y + 1].IsEmpty || (cells[pawnCell.x + 1, pawnCell.y + 1].pawn && cells[pawnCell.x + 1, pawnCell.y + 1].pawn.owner != owner))
                 {
-                    AddToMovableCells(movableCells, cells[pawnCell.x + 1, pawnCell.y + 1]);
+                    AddToMovableCells(movableCells, cells[pawnCell.x + 1, pawnCell.y + 1], owner);
                 }
             }
 
@@ -525,7 +617,7 @@ namespace CustomChess.Pieces
             {
                 if (cells[pawnCell.x - 1, pawnCell.y - 1].IsEmpty || (cells[pawnCell.x - 1, pawnCell.y - 1].pawn && cells[pawnCell.x - 1, pawnCell.y - 1].pawn.owner != owner))
                 {
-                    AddToMovableCells(movableCells, cells[pawnCell.x - 1, pawnCell.y - 1]);
+                    AddToMovableCells(movableCells, cells[pawnCell.x - 1, pawnCell.y - 1], owner);
                 }
             }
 
@@ -534,11 +626,27 @@ namespace CustomChess.Pieces
             {
                 if (cells[pawnCell.x - 1, pawnCell.y + 1].IsEmpty || (cells[pawnCell.x - 1, pawnCell.y + 1].pawn && cells[pawnCell.x - 1, pawnCell.y + 1].pawn.owner != owner))
                 {
-                    AddToMovableCells(movableCells, cells[pawnCell.x - 1, pawnCell.y + 1]);
+                    AddToMovableCells(movableCells, cells[pawnCell.x - 1, pawnCell.y + 1], owner);
                 }
             }
 
             return movableCells;
+        }
+
+        private PawnController IsCheckMate()
+        {
+            var whiteKingLegalMovesMap = whitePawnsLegalMovesMap.FirstOrDefault(p => p.Value.pawn.pieceType == PieceType.King);
+            if(whiteKingLegalMovesMap.Value != null)
+            {
+                //Condition for white check mate
+            }
+
+            var blackKingLegalMovesMap = blackPawnsLegalMovesMap.FirstOrDefault(p => p.Value.pawn.pieceType == PieceType.King);
+            if (blackKingLegalMovesMap.Value != null)
+            {
+                //Condition for black check mate
+            }
+            return null;
         }
     }
 }
