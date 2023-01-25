@@ -1,4 +1,5 @@
 using CustomChess.Board;
+using CustomChess.ConnectionLibrary;
 using CustomChess.Events;
 using CustomChess.Pieces;
 using UnityEngine;
@@ -12,6 +13,8 @@ namespace CustomChess.Base
 
         private PlayerType _lastPlayerTurn;
 
+        public SocketHandler socketHandler { get; private set; }
+
         private void OnEnable()
         {
             EventManager.PawnStartedMoving += OnPawnMovementStart;
@@ -20,6 +23,7 @@ namespace CustomChess.Base
 
         private void Awake()
         {
+            socketHandler = new SocketHandler("http://192.168.1.6:3000");
             PrepareBoard();
         }
 
